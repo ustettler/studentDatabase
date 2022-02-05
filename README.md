@@ -1,3 +1,3 @@
 # Student Database
 
-Student Administartion with (MERN STACK) - in progress
+Student Administartion with MERN Stack - in progress
