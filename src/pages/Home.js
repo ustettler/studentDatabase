@@ -14,9 +14,20 @@ export const Home = () => {
 
   const getStudents = () => {
     axios
-      .get("http://localhost:3001/")
-      .then((response) => setState({ ...state, students: response.data }))
+      .get("http://localhost:3001/students/")
+      .then((response) => console.log(response))
       .catch((err) => console.log(err));
+  };
+
+  const addStudents = async () => {
+    let student = {
+      vorname: "Hans",
+      nachname: "Müller",
+      matrikelnummer: Number("007"),
+      semester: Number("0322"),
+    };
+
+    await axios.post("http://localhost:3001/students/", student);
   };
 
   useEffect(() => {
@@ -37,52 +48,51 @@ export const Home = () => {
   return (
     <>
       <h1>Student's Database</h1>
+
+      <Box
+        sx={{
+          alignItems: "center",
+          "& > :not(style)": { m: 1 },
+        }}
+      >
+        <TextField
+          id="demo-helper-text-aligned"
+          label="Firstname"
+          onChange={() => handleChange()}
+        />
+        <br />
+        <TextField
+          id="demo-helper-text-aligned"
+          label="Lastname"
+          onChange={() => handleChange()}
+        />
+        <br />
+        <TextField
+          id="demo-helper-text-aligned"
+          label="Cadastral No."
+          onChange={() => handleChange()}
+        />
+        <br />
+        <TextField
+          id="demo-helper-text-aligned"
+          label="Semester"
+          onChange={() => handleChange()}
+        />
+      </Box>
+      <br />
+      <Stack spacing={2} direction="row">
+        <Button variant="contained" onClick={() => addStudents()}>
+          Add new Student
+        </Button>
+      </Stack>
+
+      <h2>Student's List</h2>
       {/*  {state.students.map((i, k) => (
         <div key={k}>
           {i.vorname}
           {i.nachname}
         </div>
       ))} */}
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          "& > :not(style)": { m: 1 },
-        }}
-      >
-        <TextField
-          helperText="Please enter the Firstname"
-          id="demo-helper-text-aligned"
-          label="Firstname"
-          onChange={() => handleChange()}
-        />
-
-        <TextField
-          helperText="Please enter the Lastname"
-          id="demo-helper-text-aligned"
-          label="Lastname"
-          onChange={() => handleChange()}
-        />
-
-        <TextField
-          helperText="Please enter the cadastral number"
-          id="demo-helper-text-aligned"
-          label="cadastral number"
-          onChange={() => handleChange()}
-        />
-
-        <TextField
-          helperText="Please enter the semester"
-          id="demo-helper-text-aligned"
-          label="semester"
-          onChange={() => handleChange()}
-        />
-      </Box>
-      <br />
-      <Stack spacing={2} direction="row">
-        <Button variant="contained">Add Student</Button>
-      </Stack>
     </>
   );
 };
