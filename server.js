@@ -12,7 +12,7 @@ app.use(morgan("tiny"));
 
 mongoose
   .connect(
-    "mongodb+srv://nickcold:GgGh3rXr5xjxcvG@cluster0.y58pq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+   
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
