@@ -8,6 +8,10 @@ import axios from "axios";
 export const Home = () => {
   const [state, setState] = useState({
     students: [],
+    firstname: "",
+    lastname: "",
+    semster: "",
+    conumber: "",
   });
 
   // Server-Start: node server.js
@@ -21,10 +25,10 @@ export const Home = () => {
 
   const addStudents = async () => {
     let student = {
-      vorname: "Hans",
-      nachname: "Müller",
-      matrikelnummer: Number("007"),
-      semester: Number("0322"),
+      vorname: state.firstname,
+      nachname: state.lastname,
+      matrikelnummer: Number(state.conumber),
+      semester: Number(state.semester),
     };
 
     await axios.post("http://localhost:3001/students/", student);
@@ -43,7 +47,10 @@ export const Home = () => {
     return () => clearInterval(interval);
   }, [state, getStudents]);
 
-  const handleChange = (e) => {};
+  const handleChange = (e) => {
+    e.preventDefault();
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
   //Renderer
   return (
     <>
@@ -58,25 +65,31 @@ export const Home = () => {
         <TextField
           id="demo-helper-text-aligned"
           label="Firstname"
-          onChange={() => handleChange()}
+          name="firstname"
+          onChange={(e) => handleChange(e)}
         />
         <br />
         <TextField
           id="demo-helper-text-aligned"
           label="Lastname"
-          onChange={() => handleChange()}
+          name="lastname"
+          onChange={(e) => handleChange(e)}
         />
         <br />
         <TextField
           id="demo-helper-text-aligned"
+          type="number"
           label="Cadastral No."
-          onChange={() => handleChange()}
+          name="conumber"
+          onChange={(e) => handleChange(e)}
         />
         <br />
         <TextField
           id="demo-helper-text-aligned"
+          type="number"
           label="Semester"
-          onChange={() => handleChange()}
+          name="semester"
+          onChange={(e) => handleChange(e)}
         />
       </Box>
       <br />

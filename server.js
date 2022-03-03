@@ -11,10 +11,13 @@ app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
 mongoose
-  .connect("mongodb://localhost:27017", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://nickcold:GgGh3rXr5xjxcvG@cluster0.y58pq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log("MONGODB is connected"))
   .catch((err) => console.log(err));
 
