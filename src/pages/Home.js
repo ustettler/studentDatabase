@@ -10,8 +10,10 @@ export const Home = () => {
     students: [],
     firstname: "",
     lastname: "",
-    semster: "",
+    semester: "",
     conumber: "",
+    editModus: false,
+    editId: 0,
   });
 
   // Server-Start: node server.js
@@ -19,9 +21,22 @@ export const Home = () => {
   const getStudents = () => {
     axios
       .get("http://localhost:3001/students/")
-      .then((response) => console.log(response))
+      .then((response) => setState({ ...state, students: response.data }))
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (state?.students.length) {
+        return () => clearInterval(interval);
+      } else {
+        if (!state?.students.length) {
+          getStudents();
+        }
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [state, getStudents]);
 
   const addStudents = async () => {
     let student = {
@@ -34,23 +49,41 @@ export const Home = () => {
     await axios.post("http://localhost:3001/students/", student);
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (state?.students.length) {
-        return () => clearInterval(interval);
-      } else {
-        if (!state?.students.length) {
-          getStudents();
-        }
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [state, getStudents]);
-
   const handleChange = (e) => {
     e.preventDefault();
     setState({ ...state, [e.target.name]: e.target.value });
   };
+
+  // Delete
+  const handleDelete = (id) => {
+    const result = state.students.filter((i) => i.id !== id);
+    setState({ ...state, students: result });
+  };
+
+  // Edit Modus
+  const handleEdit = (id) => {
+    setState({ ...state, editModus: true, editId: id });
+  };
+
+  // Change
+  const handelEditChange = (e) => {
+    e.preventDefault();
+    setState({ ...state, vorname: e.target.value });
+    console.log(state.stat);
+  };
+
+  // Save
+  const handleSave = (id) => {
+    state.students.forEach((elemente) => {
+      if (id === elemente.id) {
+        elemente.students = state.students;
+        setState({ ...state, students: state.students, editModus: false });
+        //console.log(elemente);
+      }
+    });
+  };
+
+  //onsole.log(state.students);
   //Renderer
   return (
     <>
@@ -100,12 +133,32 @@ export const Home = () => {
       </Stack>
 
       <h2>Student's List</h2>
-      {/*  {state.students.map((i, k) => (
-        <div key={k}>
-          {i.vorname}
-          {i.nachname}
-        </div>
-      ))} */}
+
+      {state.students
+        .slice()
+        .reverse()
+        .map((i, k) => (
+          <div key={k}>
+            {state.editModus && i.id === state.editId ? (
+              <div key={k}>
+                <input
+                  value={i.vorname}
+                  onChange={(e) => handelEditChange(e)}
+                />
+                <button onClick={() => handleSave(i.id)}>Save</button>
+              </div>
+            ) : (
+              <div key={k}>
+                id: {i._id}&nbsp; Vorname:{i.vorname}&nbsp; Nachname:{" "}
+                {i.nachname}
+                &nbsp; Matrikelnummer: {i.matrikelnummer}&nbsp; Semster:
+                {i.semester}
+                <button onClick={() => handleDelete(i.id)}>X</button>
+                <button onClick={() => handleEdit()}>Edit</button>
+              </div>
+            )}
+          </div>
+        ))}
     </>
   );
 };
