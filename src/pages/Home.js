@@ -14,6 +14,7 @@ export const Home = () => {
     conumber: "",
     editModus: false,
     editId: 0,
+    id: 0,
   });
 
   // Server-Start: node server.js
@@ -36,17 +37,18 @@ export const Home = () => {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [state, getStudents]);
+  }, [state.students]);
 
   const addStudents = async () => {
     let student = {
+      id: state.id,
       vorname: state.firstname,
       nachname: state.lastname,
       matrikelnummer: Number(state.conumber),
       semester: Number(state.semester),
     };
-
-    await axios.post("http://localhost:3001/students/", student);
+    setState({ ...state, id: state.id + 1 });
+    await axios.post("http://localhost:3001/students/add", student);
   };
 
   const handleChange = (e) => {
@@ -55,9 +57,10 @@ export const Home = () => {
   };
 
   // Delete
-  const handleDelete = (id) => {
-    const result = state.students.filter((i) => i.id !== id);
-    setState({ ...state, students: result });
+  const handleDelete = async (id) => {
+    let ids = { del: id };
+    await axios.delete(`http://localhost:3001/students/delete/${id}`);
+    setState({ ...state, id: id });
   };
 
   // Edit Modus
@@ -149,8 +152,7 @@ export const Home = () => {
               </div>
             ) : (
               <div key={k}>
-                id: {i._id}&nbsp; Vorname:{i.vorname}&nbsp; Nachname:{" "}
-                {i.nachname}
+                id: {i.id} Vorname:{i.vorname}&nbsp; Nachname: {i.nachname}
                 &nbsp; Matrikelnummer: {i.matrikelnummer}&nbsp; Semster:
                 {i.semester}
                 <button onClick={() => handleDelete(i.id)}>X</button>

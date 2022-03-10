@@ -9,10 +9,11 @@ const studentRoutes = require("./src/routes/routes");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
-
+console.log(process.env.key);
 mongoose
   .connect(
-   
+    //mongo db verbindung via .env
+    "mongodb+srv://nickcold:GgGh3rXr5xjxcvG@cluster0.y58pq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

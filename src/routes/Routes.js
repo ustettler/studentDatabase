@@ -1,3 +1,4 @@
+const { SelectUnstyledContext } = require("@mui/base");
 const { Router } = require("express");
 const Student = require("../model/StudentScheme");
 
@@ -15,10 +16,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const { vorname, nachname, matrikelnummer, semester } = req.body;
+router.post("/add", async (req, res) => {
+  const { id, vorname, nachname, matrikelnummer, semester } = req.body;
 
   const newStudent = new Student({
+    id,
     vorname,
     nachname,
     matrikelnummer,
@@ -35,6 +37,12 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log(req.params);
+  await Student.deleteOne({ id: id });
 });
 
 module.exports = router;
