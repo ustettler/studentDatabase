@@ -13,7 +13,7 @@ console.log(process.env.key);
 mongoose
   .connect(
     //mongo db verbindung via .env
-    "mongodb+srv://nickcold:GgGh3rXr5xjxcvG@cluster0.y58pq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+ 
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
