@@ -14,7 +14,6 @@ export const Home = () => {
     conumber: "",
     editModus: false,
     editId: 0,
-    id: 0,
   });
 
   // Server-Start: node server.js
@@ -27,13 +26,11 @@ export const Home = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (state?.students.length) {
         return () => clearInterval(interval);
       } else {
-        if (!state?.students.length) {
-          getStudents();
-        }
+        await getStudents();
       }
     }, 1000);
     return () => clearInterval(interval);
@@ -41,14 +38,16 @@ export const Home = () => {
 
   const addStudents = async () => {
     let student = {
-      id: state.id,
       vorname: state.firstname,
       nachname: state.lastname,
       matrikelnummer: Number(state.conumber),
       semester: Number(state.semester),
     };
-    setState({ ...state, id: state.id + 1 });
-    await axios.post("http://localhost:3001/students/add", student);
+
+    await axios
+      .post("http://localhost:3001/students/add", student)
+      .then((response) => getStudents())
+      .catch((err) => console.log(err));
   };
 
   const handleChange = (e) => {
@@ -58,14 +57,21 @@ export const Home = () => {
 
   // Delete
   const handleDelete = async (id) => {
-    let ids = { del: id };
-    await axios.delete(`http://localhost:3001/students/delete/${id}`);
-    setState({ ...state, id: id });
+    console.log(id);
+    await axios
+      .delete(`http://localhost:3001/students/delete/${id}`)
+      .then((response) => getStudents())
+      .catch((err) => console.log(err));
   };
 
   // Edit Modus
   const handleEdit = (id) => {
     setState({ ...state, editModus: true, editId: id });
+  };
+
+  //Edit Back
+  const handleBack = (id) => {
+    setState({ ...state, editModus: false, editId: id });
   };
 
   // Change
@@ -149,14 +155,23 @@ export const Home = () => {
                   onChange={(e) => handelEditChange(e)}
                 />
                 <button onClick={() => handleSave(i.id)}>Save</button>
+                <button onClick={() => handleBack(i.id)}>Back</button>
               </div>
             ) : (
               <div key={k}>
-                id: {i.id} Vorname:{i.vorname}&nbsp; Nachname: {i.nachname}
-                &nbsp; Matrikelnummer: {i.matrikelnummer}&nbsp; Semster:
-                {i.semester}
-                <button onClick={() => handleDelete(i.id)}>X</button>
+                <b> id: </b> {i._id}
+                <b>&nbsp; Vorname:</b> {i.vorname}
+                <b> &nbsp; Nachname: </b>
+                {i.nachname}
+                <b>&nbsp; Matrikelnummer: </b> {i.matrikelnummer}
+                <b>&nbsp; Semster: </b>
+                {i.semester}&nbsp;
+                {/* Fileupload */}
+                <input type="file" id="myFile" name="filename" />
+                <br />
+                <button onClick={() => handleDelete(i._id)}>X</button>
                 <button onClick={() => handleEdit()}>Edit</button>
+                <hr />
               </div>
             )}
           </div>

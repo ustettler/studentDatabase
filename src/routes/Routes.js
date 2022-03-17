@@ -42,7 +42,12 @@ router.post("/add", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
   console.log(req.params);
-  await Student.deleteOne({ id: id });
+  try {
+    await Student.deleteOne({ _id: id });
+    res.status(200).json({ message: "Eintrag erfolgreich gelöscht!" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

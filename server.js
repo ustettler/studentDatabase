@@ -5,15 +5,17 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const studentRoutes = require("./src/routes/routes");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
-console.log(process.env.key);
 mongoose
   .connect(
     //mongo db verbindung via .env
-    "mongodb+srv://nickcold:GgGh3rXr5xjxcvG@cluster0.y58pq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    process.env.login,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
