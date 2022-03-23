@@ -163,7 +163,7 @@ export const Home = () => {
                 <b>&nbsp; Vorname:</b> {i.vorname}
                 <b> &nbsp; Nachname: </b>
                 {i.nachname}
-                <b>&nbsp; Matrikelnummer: </b> {i.matrikelnummer}
+                <b>&nbsp; Matrikelnummern: </b> {i.matrikelnummer}
                 <b>&nbsp; Semster: </b>
                 {i.semester}&nbsp;
                 {/* Fileupload */}
