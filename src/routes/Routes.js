@@ -17,10 +17,9 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-  const { id, vorname, nachname, matrikelnummer, semester } = req.body;
+  const { vorname, nachname, matrikelnummer, semester } = req.body;
 
   const newStudent = new Student({
-    id,
     vorname,
     nachname,
     matrikelnummer,
@@ -46,6 +45,24 @@ router.delete("/delete/:id", async (req, res) => {
     await Student.deleteOne({ _id: id });
     res.status(200).json({ message: "Eintrag erfolgreich gelöscht!" });
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.post("/update/:id", async (req, res) => {
+  const { id } = req.params;
+  const { vorname, nachname } = req.body;
+  console.log(req.params);
+  console.log(req.body);
+  try {
+    const updatedStudent = await Student.findById(id);
+    console.log(updatedStudent);
+    updatedStudent.vorname = vorname ? vorname : updatedStudent.vorname;
+
+    updatedStudent.save();
+    return res.status(200).json({ message: "Eintrag erfolgreich geändert!" });
+  } catch (err) {
+    console.log(err.message);
     res.status(500).json({ message: err.message });
   }
 });

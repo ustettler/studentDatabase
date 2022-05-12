@@ -14,6 +14,7 @@ export const Home = () => {
     conumber: "",
     editModus: false,
     editId: 0,
+    editVorname: "",
   });
 
   // Server-Start: node server.js
@@ -27,7 +28,7 @@ export const Home = () => {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      if (state?.students.length) {
+      if (state?.students?.length) {
         return () => clearInterval(interval);
       } else {
         await getStudents();
@@ -77,19 +78,19 @@ export const Home = () => {
   // Change
   const handelEditChange = (e) => {
     e.preventDefault();
-    setState({ ...state, vorname: e.target.value });
-    console.log(state.stat);
+    setState({ ...state, editVorname: e.target.value });
+    console.log(state.editVorname);
   };
 
   // Save
-  const handleSave = (id) => {
-    state.students.forEach((elemente) => {
-      if (id === elemente.id) {
-        elemente.students = state.students;
-        setState({ ...state, students: state.students, editModus: false });
-        //console.log(elemente);
-      }
-    });
+  const handleSave = async (id) => {
+    await axios
+      .post(`http://localhost:3001/students/update/${id}`, {
+        vorname: state.editVorname,
+        nachname: "hardcoded",
+      })
+      .then((response) => setState({ editModus: false }), getStudents())
+      .catch((err) => console.log(err));
   };
 
   //onsole.log(state.students);
@@ -144,18 +145,18 @@ export const Home = () => {
       <h2>Student's List</h2>
 
       {state.students
-        .slice()
+        ?.slice()
         .reverse()
         .map((i, k) => (
           <div key={k}>
             {state.editModus && i.id === state.editId ? (
               <div key={k}>
                 <input
-                  value={i.vorname}
+                  value={state.editVorname}
                   onChange={(e) => handelEditChange(e)}
                 />
-                <button onClick={() => handleSave(i.id)}>Save</button>
-                <button onClick={() => handleBack(i.id)}>Back</button>
+                <button onClick={() => handleSave(i._id)}>Save</button>
+                <button onClick={() => handleBack(i._id)}>Back</button>
               </div>
             ) : (
               <div key={k}>
@@ -163,7 +164,7 @@ export const Home = () => {
                 <b>&nbsp; Vorname:</b> {i.vorname}
                 <b> &nbsp; Nachname: </b>
                 {i.nachname}
-                <b>&nbsp; Matrikelnummern: </b> {i.matrikelnummer}
+                <b>&nbsp; Matrikelnummer: </b> {i.matrikelnummer}
                 <b>&nbsp; Semster: </b>
                 {i.semester}&nbsp;
                 {/* Fileupload */}
