@@ -58,6 +58,7 @@ router.post("/update/:id", async (req, res) => {
     const updatedStudent = await Student.findById(id);
     console.log(updatedStudent);
     updatedStudent.vorname = vorname ? vorname : updatedStudent.vorname;
+    updatedStudent.nachname = nachname ? nachname : updatedStudent.nachname;
 
     updatedStudent.save();
     return res.status(200).json({ message: "Eintrag erfolgreich geändert!" });

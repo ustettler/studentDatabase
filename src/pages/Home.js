@@ -15,6 +15,8 @@ export const Home = () => {
     editModus: false,
     editId: 0,
     editVorname: "",
+    editName: "",
+    search: "",
   });
 
   // Server-Start: node server.js
@@ -75,11 +77,18 @@ export const Home = () => {
     setState({ ...state, editModus: false, editId: id });
   };
 
-  // Change
+  // Change Vorname
   const handelEditChange = (e) => {
     e.preventDefault();
     setState({ ...state, editVorname: e.target.value });
     console.log(state.editVorname);
+  };
+
+  // Change Name
+  const handelEditChangeName = (e) => {
+    e.preventDefault();
+    setState({ ...state, editName: e.target.value });
+    console.log("name" + state.editName);
   };
 
   // Save
@@ -87,13 +96,25 @@ export const Home = () => {
     await axios
       .post(`http://localhost:3001/students/update/${id}`, {
         vorname: state.editVorname,
-        nachname: "hardcoded",
+        nachname: state.editName,
       })
       .then((response) => setState({ editModus: false }), getStudents())
       .catch((err) => console.log(err));
   };
 
-  //onsole.log(state.students);
+  //Edit Name
+  const handleEditName = (id) => {
+    setState({ ...state, editModus: true, editId: id });
+  };
+
+  //search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setState({ ...state, search: e.target.value });
+    //console.log(state.search);
+  };
+
+  console.log("students " + state.search);
   //Renderer
   return (
     <>
@@ -143,40 +164,57 @@ export const Home = () => {
       </Stack>
 
       <h2>Student's List</h2>
+      <div>
+        <input onChange={(e) => handleSearch(e)} />
+      </div>
 
       {state.students
         ?.slice()
         .reverse()
-        .map((i, k) => (
-          <div key={k}>
-            {state.editModus && i.id === state.editId ? (
+        .map((i, k) => {
+          if (
+            i.vorname.toLowerCase().includes(state.search.toLowerCase()) ||
+            !state.search ||
+            i.nachname.toLowerCase().includes(state.search.toLowerCase()) ||
+            String(i._id).toLowerCase().includes(state.search.toLowerCase())
+          ) {
+            return (
               <div key={k}>
-                <input
-                  value={state.editVorname}
-                  onChange={(e) => handelEditChange(e)}
-                />
-                <button onClick={() => handleSave(i._id)}>Save</button>
-                <button onClick={() => handleBack(i._id)}>Back</button>
+                {console.log(state.editId)}
+                {state.editModus && i._id === state.editId ? (
+                  <div key={k}>
+                    <input
+                      value={state.editVorname}
+                      onChange={(e) => handelEditChange(e)}
+                    />
+                    <input
+                      value={state.editName}
+                      onChange={(e) => handelEditChangeName(e)}
+                    />
+                    <button onClick={() => handleSave(i._id)}>Save</button>
+                    <button onClick={() => handleBack(i._id)}>Back</button>
+                  </div>
+                ) : (
+                  <div key={k}>
+                    <b> id: </b> {i._id}
+                    <b>&nbsp; Vorname:</b> {i.vorname}
+                    <b> &nbsp; Nachname: </b>
+                    {i.nachname}
+                    <b>&nbsp; Matrikelnummer: </b> {i.matrikelnummer}
+                    <b>&nbsp; Semster: </b>
+                    {i.semester}&nbsp;
+                    {/* Fileupload */}
+                    <input type="file" id="myFile" name="filename" />
+                    <br />
+                    <button onClick={() => handleDelete(i._id)}>X</button>
+                    <button onClick={() => handleEdit(i._id)}>Edit</button>
+                    <hr />
+                  </div>
+                )}
               </div>
-            ) : (
-              <div key={k}>
-                <b> id: </b> {i._id}
-                <b>&nbsp; Vorname:</b> {i.vorname}
-                <b> &nbsp; Nachname: </b>
-                {i.nachname}
-                <b>&nbsp; Matrikelnummer: </b> {i.matrikelnummer}
-                <b>&nbsp; Semster: </b>
-                {i.semester}&nbsp;
-                {/* Fileupload */}
-                <input type="file" id="myFile" name="filename" />
-                <br />
-                <button onClick={() => handleDelete(i._id)}>X</button>
-                <button onClick={() => handleEdit()}>Edit</button>
-                <hr />
-              </div>
-            )}
-          </div>
-        ))}
+            );
+          }
+        })}
     </>
   );
 };
